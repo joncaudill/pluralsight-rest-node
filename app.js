@@ -3,7 +3,15 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 const app = express();
-const db = mongoose.connect('mongodb://localhost/bookAPI');
+if (process.env.ENV === 'Test') {
+  // eslint-disable-next-line no-console
+  console.log('This is a Test');
+  const db = mongoose.connect('mongodb://localhost/bookAPI_Test');
+} else {
+  // eslint-disable-next-line no-console
+  console.log('This is for real');
+  const db = mongoose.connect('mongodb://localhost/bookAPI');
+}
 const port = process.env.PORT || 3000;
 const Book = require('./models/bookModel');
 const bookRouter = require('./routes/bookRouter')(Book);
@@ -17,7 +25,9 @@ app.get('/', (req, res) => {
   res.send('Welcome to my Nodemon API!');
 });
 
-app.listen(port, () => {
+app.server = app.listen(port, () => {
   // eslint-disable-next-line no-console
   console.log(`Running on port ${port}`);
 });
+
+module.exports = app;
